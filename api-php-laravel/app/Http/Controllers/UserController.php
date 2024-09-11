@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DeleteDestroyUser;
+use App\Http\Requests\GetFindUser;
 use App\Http\Requests\PostCreateUser;
 use App\Http\Requests\PutUpdateUser;
 use App\Models\User;
@@ -70,9 +71,31 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(GetFindUser $request)
     {
-        //
+        try {
+            $user = User::findOrFail($request->id);
+
+            return response()->json([
+                'data'      => [
+                    'name' => $user->name,
+                    'phone' => $user->phone,
+                    'email' => $user->email,
+                    'company' => $user->company,
+                    'address' => $user->address,
+                    'latitude' => $user->latitude,
+                    'longitude' => $user->longitude,
+                ],
+                'error'     => null,
+                'status'    => 200
+            ]);
+        }catch (\Exception $e){
+            return response()->json([
+                'data'      => null,
+                'error'     => $e->getMessage(),
+                'status'    => 400
+            ]);
+        }
     }
 
     /**
